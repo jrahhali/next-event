@@ -34,7 +34,7 @@ function Event() {
     this._listeners = [];
 }
 
-Event.prototype.addListener = function(listener) {
+Event.prototype.register = function(listener) {
     if (typeof listener !== "function")
         throw new TypeError("Actual type: " + typeof listener + ". Expected type: 'function'");
     
@@ -52,6 +52,15 @@ Event.prototype.fire = function(data) {
 
 Event.prototype.clear = function() {
     this._listeners = [];
+};
+
+Event.prototype.unregister = function(listener) {
+    for (var i = 0; i < this._listeners.length; i++) {
+        if (this._listeners[i] === listener) {
+            this._listeners.splice(i, 1);
+            break;
+        }
+    }
 };
 
 module.exports = Event;
