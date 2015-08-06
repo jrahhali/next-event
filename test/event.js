@@ -1,48 +1,48 @@
 "use strict";
 
 var assert = require("assert");
-var Event = require("../src/event");
+var Event = require("./../lib/event");
 
 describe("Event", function() {
-    describe("register()", function() {
+    describe("#subscribe()", function() {
         it("should add listeners", function() {
             var event = new Event();
-            event.register(function(){});
+            event.add(function(){});
             assert(event._listeners.length === 1);
-            event.register(function(){});
+            event.add(function(){});
             assert(event._listeners.length === 2);
         });        
     });
     
-    describe("clear()", function() {
+    describe("#clear()", function() {
         it("should clear the event of all listeners", function() {
             var event = new Event();
-            event.register(function(){});
+            event.add(function(){});
             event.clear();
             assert(event._listeners.length === 0);
         });
     });
     
-    describe("remove()", function() {
+    describe("#unsubscribe()", function() {
         it("should remove the supplied listener", function() {
             var event = new Event();
             var callOrder = "";
             var listener1 = function() { callOrder += "1"; };
             var listener2 = function() { callOrder += "2"; };
-            event.register(listener1);
-            event.register(listener2);
-            event.unregister(listener1);
+            event.add(listener1);
+            event.add(listener2);
+            event.remove(listener1);
             event.fire();
             assert.equal(callOrder, "2");
         });
     });
     
-    describe("fire()", function() {
+    describe("#fire()", function() {
         it("should notify listeners in the order they were added", function() {
             var event = new Event();
             var callOrder = "";
-            event.register(function() { callOrder += "1"; });
-            event.register(function() { callOrder += "2"; });
+            event.add(function() { callOrder += "1"; });
+            event.add(function() { callOrder += "2"; });
             event.fire();
             assert(callOrder === "12");
         });
@@ -51,7 +51,7 @@ describe("Event", function() {
             var event = new Event();
             var sender;
             var data;
-            event.register(function() { 
+            event.add(function() { 
                 sender = arguments[0];
                 data = arguments[1];
             });
@@ -65,21 +65,21 @@ describe("Event", function() {
             var event3 = new Event();
             var callOrder = "";
             
-            event1.register(function() {
+            event1.add(function() {
                 callOrder += "1";
                 event2.fire();
             });
-            event1.register(function() {
+            event1.add(function() {
                  callOrder += "2";
             });
-            event2.register(function() {
+            event2.add(function() {
                 callOrder += "3"; 
                 event3.fire();                
             });
-            event2.register(function() {
+            event2.add(function() {
                 callOrder += "4"; 
             });
-            event3.register(function() {
+            event3.add(function() {
                 callOrder += "5"; 
             });
             
