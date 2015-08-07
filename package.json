@@ -1,8 +1,8 @@
 {
-    "name": "rah-event",
-    "version": 0.0.0,
-    "description": "An implementation of the Observer Pattern.",
+    "name": "next-event",
+    "version": "0.0.0",
+    "description": "An implementation of the Observer Pattern.  Events are queued, ensuring all listeners of one event are notified before any other event is fired.",
     "author": "Jamal Rahhali <rahhali@live.com>",
     "private": true,
-    "main": "lib/event.js"
+    "main": "./lib/event.js"
 }

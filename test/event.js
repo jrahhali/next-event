@@ -4,7 +4,7 @@ var assert = require("assert");
 var Event = require("./../lib/event");
 
 describe("Event", function() {
-    describe("#subscribe()", function() {
+    describe("add()", function() {
         it("should add listeners", function() {
             var event = new Event();
             event.add(function(){});
@@ -14,16 +14,7 @@ describe("Event", function() {
         });        
     });
     
-    describe("#clear()", function() {
-        it("should clear the event of all listeners", function() {
-            var event = new Event();
-            event.add(function(){});
-            event.clear();
-            assert(event._listeners.length === 0);
-        });
-    });
-    
-    describe("#unsubscribe()", function() {
+    describe("remove()", function() {
         it("should remove the supplied listener", function() {
             var event = new Event();
             var callOrder = "";
@@ -35,9 +26,20 @@ describe("Event", function() {
             event.fire();
             assert.equal(callOrder, "2");
         });
+    });    
+    
+    describe("clear()", function() {
+        it("should clear the event of all listeners", function() {
+            var event = new Event();
+            event.add(function(){});
+            event.clear();
+            assert(event._listeners.length === 0);
+        });
     });
     
-    describe("#fire()", function() {
+
+    
+    describe("fire()", function() {
         it("should notify listeners in the order they were added", function() {
             var event = new Event();
             var callOrder = "";
