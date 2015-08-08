@@ -1,5 +1,5 @@
 {
-	"node": true,
+    "node": true,
     "mocha": true,
     "supernew": true
 }
