@@ -28,11 +28,11 @@ describe("Event", function() {
         });
     });
 
-    describe("clear()", function() {
+    describe("removeAll()", function() {
         it("should remove all listeners", function() {
             var event = new Event();
             event.add(function(){});
-            event.clear();
+            event.removeAll();
             assert(event._listeners.length === 0);
         });
     });
