@@ -81,13 +81,13 @@ describe("Event", function() {
             assert.equal(callOrder, "12345");
         });
 
-        it("should call listeners with 'sender' and 'data' arguments", function() {
+        it("should call listeners with the arguments supplied", function() {
             var event = new Event();
             var sender;
             var data;
-            event.add(function() {
-                sender = arguments[0];
-                data = arguments[1];
+            event.add(function(param1, param2) {
+                sender = param1;
+                data = param2;
             });
             event.fire(this, "message");
             assert(sender === this && data === "message");
