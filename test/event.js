@@ -4,47 +4,120 @@ var assert = require("assert");
 var Event = require("./../lib/event");
 
 describe("Event", function() {
-    describe("add()", function() {
+    describe("addListener()", function() {
+        it("addListener() should throw error", function() {
+            var event = new Event();
+            try {
+                event.addListener();
+                assert(false);
+            }
+            catch (err) {
+                assert(true);
+            }
+        });
+
+        it("addListener(instanceof Object) should throw error", function() {
+            var event = new Event();
+            try {
+                event.addListener({});
+                assert(false);
+            }
+            catch (err) {
+                assert(true);
+            }
+        });
+
+        it("addListener(instanceof Function, instanceof Object) should throw error", function() {
+            var event = new Event();
+            try {
+                event.addListener(function(){}, {});
+                assert(false);
+            }
+            catch (err) {
+                assert(true);
+            }
+        });
+
+        it("addListener(instanceof Function, undefined) should be OK", function() {
+            var event = new Event();
+            try {
+                event.addListener(function(){}, undefined);
+                assert(true);
+            }
+            catch (err) {
+                assert(false);
+            }
+        });
+
+        it("addListener(instanceof Function, null) should be OK", function() {
+            var event = new Event();
+            try {
+                event.addListener(function(){}, null);
+                assert(true);
+            }
+            catch (err) {
+                assert(false);
+            }
+        });
+
+        it("addListener(instanceof Function) should be OK", function() {
+            var event = new Event();
+            try {
+                event.addListener(function(){});
+                assert(true);
+            }
+            catch (err) {
+                assert(false);
+            }
+        });
+
         it("should add listeners", function() {
             var event = new Event();
-            event.add(function(){});
-            assert(event._listeners.length === 1);
-            event.add(function(){});
+            event.addListener(function(){});
+            event.addListener(function(){});
             assert(event._listeners.length === 2);
         });
     });
 
-    describe("remove()", function() {
-        it("should remove listeners", function() {
+    describe("removeListener()", function() {
+        it("should remove listeners with no context", function() {
             var event = new Event();
-            var callOrder = "";
-            var listener1 = function() { callOrder += "1"; };
-            var listener2 = function() { callOrder += "2"; };
-            event.add(listener1);
-            event.add(listener2);
-            event.remove(listener1);
-            event.fire();
-            assert.equal(callOrder, "2");
+            var listener1 = function() {};
+            var listener2 = function() {};
+            event.addListener(listener1);
+            event.addListener(listener2);
+            event.removeListener(listener1);
+            assert(event._listeners[0].method === listener2);
+        });
+
+        it("should remove listeners added with a context", function() {
+            var event = new Event();
+            var context = {
+                listener1: function() {},
+                listener2: function() {}
+            };
+            event.addListener(context, context.listener1);
+            event.addListener(context, context.listener2);
+            event.removeListener(context, context.listener1);
+            assert(event._listeners[0].context === context && event._listeners[0].method === context.listener2);
         });
     });
 
-    describe("removeAll()", function() {
+    describe("removeAllListeners()", function() {
         it("should remove all listeners", function() {
             var event = new Event();
-            event.add(function(){});
-            event.removeAll();
+            event.addListener(function(){});
+            event.removeAllListeners();
             assert(event._listeners.length === 0);
         });
     });
-
-
 
     describe("fire()", function() {
         it("should notify listeners in the order they were added", function() {
             var event = new Event();
             var callOrder = "";
-            event.add(function() { callOrder += "1"; });
-            event.add(function() { callOrder += "2"; });
+            event.addListener(function() { callOrder += "1"; });
+            event.addListener(function() { callOrder += "2"; });
             event.fire();
             assert(callOrder === "12");
         });
@@ -58,21 +131,21 @@ describe("Event", function() {
 
 
             var sender = this;
-            event1.add(function() {
+            event1.addListener(function() {
                 callOrder += "1";
                 event2.fire();
             });
-            event1.add(function() {
+            event1.addListener(function() {
                  callOrder += "2";
             });
-            event2.add(function() {
+            event2.addListener(function() {
                 callOrder += "3";
                 event3.fire();
             });
-            event2.add(function() {
+            event2.addListener(function() {
                 callOrder += "4";
             });
-            event3.add(function() {
+            event3.addListener(function() {
                 callOrder += "5";
             });
 
@@ -85,12 +158,25 @@ describe("Event", function() {
             var event = new Event();
             var sender;
             var data;
-            event.add(function(param1, param2) {
+            event.addListener(function(param1, param2) {
                 sender = param1;
                 data = param2;
             });
             event.fire(this, "message");
             assert(sender === this && data === "message");
+        });
+
+        it("should call listeners added with a context", function() {
+            var event = new Event();
+            var output = "";
+            function Context() {
+                this.firstName = "jamal";
+            }
+            Context.prototype.outputName = function() { output = this.firstName; };
+
+            event.addListener(new Context(), Context.prototype.outputName);
+            event.fire();
+            assert(output === "jamal");
         });
     });
 });
